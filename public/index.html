@@ -9,7 +9,82 @@
 </head>
 <body>
     <h1>Pet Finder</h1>
-    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="searchForm">
+        <label for="owner">Search by Owner:</label>
+        <input type="text" id="owner" name="owner" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <form id="searchByNameForm">
+        <label for="petName">Search by Name:</label>
+        <input type="text" id="petName" name="petName" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchByOwner();
+        });
+
+        document.getElementById('searchByNameForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            searchByName();
+        });
+
+        function searchByOwner() {
+            const owner = document.getElementById('owner').value;
+            fetch(`/api/v1/pets/owner?owner=${owner}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayResult(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function searchByName() {
+            const petName = document.getElementById('petName').value;
+            fetch(`/api/v1/pets/${petName}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayResult(data);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function displayResult(data) {
+            const resultContainer = document.getElementById('result');
+            if (data.message) {
+                resultContainer.innerHTML = `<p>${data.message}</p>`;
+            } else {
+                resultContainer.innerHTML = `<p>Result:</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        }
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
